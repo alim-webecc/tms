@@ -85,7 +85,9 @@ class UnsavedChangesGuard {
     container.addEventListener(
       "click",
       async (e) => {
-        const t = e.target.closest("a,[data-navigate]");
+        const t = e.target.closest(
+          'a,[data-navigate],[data-href],[data-back],[data-role="cancel"],button[data-action="cancel"]'
+        );
         if (!t || t.hasAttribute("data-bypass-guard")) return;
 
         const isAnchor = t.tagName.toLowerCase() === "a";
@@ -93,12 +95,24 @@ class UnsavedChangesGuard {
           if (isAnchor) {
             const href = t.getAttribute("href");
             if (href) window.location.href = href;
-          } else if (t.dataset.navigate) {
+            return;
+          }
+          if (t.dataset.href) {
+            window.location.href = t.dataset.href;
+            return;
+          }
+          if (
+            t.dataset.back === "1" ||
+            t.dataset.navigate === "back" ||
+            t.dataset.action === "cancel" ||
+            t.dataset.role === "cancel"
+          ) {
+            history.back();
+            return;
+          }
+          if (t.dataset.navigate) {
             const fn = window[t.dataset.navigate];
             if (typeof fn === "function") fn.call(t, e);
-            else if (t.dataset.href) window.location.href = t.dataset.href;
-            else if (t.dataset.back === "1" || t.dataset.navigate === "back")
-              history.back();
           }
         };
 
@@ -106,15 +120,24 @@ class UnsavedChangesGuard {
           e.preventDefault();
           const ok = await this.confirm();
           if (ok) {
-            // kurzzeitig beforeunload-Unterdrückung → kein nativer Dialog
+            // === Bug 4: native beforeunload prompt zuverlässig unterdrücken ===
             this._suppressBeforeUnload = true;
+            const suppress = (ev) => {
+              ev.stopImmediatePropagation(); /* kein returnValue setzen */
+            };
+            window.addEventListener("beforeunload", suppress, {
+              capture: true,
+            });
             setTimeout(() => {
               this._suppressBeforeUnload = false;
-            }, 600);
+              window.removeEventListener("beforeunload", suppress, {
+                capture: true,
+              });
+            }, 800);
             go();
           }
         } else {
-          // nicht dirty: <a> → Browser macht das; [data-navigate] → selbst ausführen
+          // nicht dirty: Links lässt der Browser machen; Buttons führen wir selbst aus
           if (!isAnchor) {
             e.preventDefault();
             go();

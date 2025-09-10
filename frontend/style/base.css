@@ -759,3 +759,35 @@ a:hover {
     transition: none !important;
   }
 }
+
+/* Kebab-Menüs (3 Punkte) – Auto-Platzierung */
+.kebab-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 20;
+  display: none;
+}
+
+.kebab-menu.open {
+  display: block;
+}
+
+.kebab-menu.to-left {
+  left: auto;
+  right: 0;
+  transform-origin: top right;
+}
+
+/* Verhindert, dass Container das Menü abschneidet */
+.table,
+.table-wrapper,
+.table-container {
+  overflow: visible !important;
+}
+
+/* Rechte Spalte etwas Luft geben (vermeidet Clipping am Rand) */
+table tr>td:last-child,
+table tr>th:last-child {
+  padding-right: 12px;
+}

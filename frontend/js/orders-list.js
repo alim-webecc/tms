@@ -615,12 +615,7 @@ function renderFilters() {
       <div class="filters__field"><label for="flt-fuehrer">Frachtführer</label>
         <input id="flt-fuehrer" class="form__input" placeholder="Firma*" title="Text oder Muster mit *"><p class="filters__help"></p></div>
       <div class="filters__actions" title="Aktionen">
-        <button id="btn-search" class="iconbtn is-active" type="button" title="Suchen (Enter)" aria-label="Suchen">
-          <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-        </button>
-        <button id="btn-reset" class="iconbtn iconbtn--reset" type="button" title="Zurücksetzen" aria-label="Zurücksetzen">
-          <svg viewBox="0 0 24 24"><path d="M12 6V3L8 7l4 4V8c2.76 0 5 2.24 5 5a5 5 0 0 1-8.66 3.54l-1.42 1.42A7 7 0 1 0 12 6z"/></svg>
-        </button>
+        <button class="icon-btn" id="btnSearch"><span class="mi" aria-hidden="true">search</span></button> <button class="icon-btn" id="btnReset"><span class="mi" aria-hidden="true">refresh</span></button>
       </div>
     </div>`;
   $("#flt-orderId").addEventListener("input", validateOrderIdInput);
@@ -629,8 +624,8 @@ function renderFilters() {
       if (e.key === "Enter") applyFilters();
     })
   );
-  $("#btn-search").addEventListener("click", applyFilters);
-  $("#btn-reset").addEventListener("click", () => {
+  $("#btnSearch").addEventListener("click", applyFilters);
+  $("#btnReset").addEventListener("click", () => {
     $all(".filters input").forEach((i) => (i.value = ""));
     validateOrderIdInput();
     applyFilters();
