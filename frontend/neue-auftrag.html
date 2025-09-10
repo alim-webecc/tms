@@ -17,6 +17,8 @@
         <title>Neuen Auftrag erstellen – TH Spedition</title>
         <link rel="stylesheet" href="./style/base.css" />
         <link rel="stylesheet" href="./style/forms.css" />
+        <link rel="stylesheet" href="./style/icons.css">
+        <link rel="stylesheet" href="./style/unsaved-changes-modal.css">
 </head>
 
 <body>
@@ -63,6 +65,8 @@
                 requireAuth();
                 renderHeader();
         </script>
+        <script type="module" src="./js/init-unsaved-modal.js"></script>
+        <script type="module" src="./js/unsaved-changes-guard.js"></script>
 </body>
 
 </html>

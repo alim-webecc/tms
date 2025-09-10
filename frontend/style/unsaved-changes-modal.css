@@ -4,8 +4,11 @@
     --color-text: #1f2937;
     --color-border: #d1d5db;
     --color-title: #0b74c4;
+    /* blauer Titel wie im Screenshot */
     --color-info-bg: #f3f4f6;
+    /* graue Info-Box */
     --color-primary: #0a915a;
+    /* OK-Button grün */
     --color-primary-contrast: #ffffff;
     --radius-m: 10px;
     --space-2: 8px;
@@ -17,6 +20,7 @@
     --z-modal: 1100;
 }
 
+/* Container & Overlay */
 .ucm-modal[hidden] {
     display: none !important;
 }
@@ -33,6 +37,7 @@
     background: var(--color-overlay);
 }
 
+/* Dialog */
 .ucm-modal__dialog {
     position: relative;
     margin: 12vh auto 0;
@@ -46,6 +51,7 @@
     flex-direction: column;
 }
 
+/* Header, Body, Footer */
 .ucm-modal__header {
     display: flex;
     align-items: center;
@@ -132,6 +138,7 @@
     color: #111827;
 }
 
+/* Scroll-Lock */
 body.ucm-modal-open {
     overflow: hidden;
 }

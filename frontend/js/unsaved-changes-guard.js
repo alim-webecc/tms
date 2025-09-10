@@ -1,3 +1,10 @@
+/**
+ * Unsaved changes Guard + Modal-Steuerung.
+ * - Nur Buttons (OK/Abbrechen/X) schließen.
+ * - Backdrop/ESC haben keine Wirkung.
+ * - Fokus-Trap & Body-Scroll-Lock.
+ * - Markiert Änderungen global (auch ohne <form>).
+ */
 function getFocusable(el) {
   return [
     ...el.querySelectorAll(
@@ -18,15 +25,19 @@ class UnsavedChangesGuard {
     this._dirty = false;
     this._resolve = null;
 
+    // Backdrop: Klicks abfangen (kein Close)
     this.backdrop.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
     });
+
+    // Buttons
     this.okBtn.addEventListener("click", () => this._close(true));
     this.cancelBtns.forEach((b) =>
       b.addEventListener("click", () => this._close(false))
     );
 
+    // Keyboard: ESC deaktiviert, Tab = Fokus-Trap
     this._onKeydown = (e) => {
       if (e.key === "Escape") {
         e.preventDefault();
@@ -37,24 +48,46 @@ class UnsavedChangesGuard {
       }
     };
   }
+
   setDirty(v) {
     this._dirty = !!v;
   }
   isDirty() {
     return this._dirty;
   }
+
+  /** Trackt konkretes <form>-Element. */
   trackForm(form) {
     if (!form) return;
     const mark = () => this.setDirty(true);
     form.addEventListener("input", mark, { capture: true });
     form.addEventListener("change", mark, { capture: true });
   }
+
+  /** Trackt ALLE Inputs in einem Container (z. B. document), auch ohne <form>. */
+  trackAnyInputs(container = document) {
+    const mark = () => this.setDirty(true);
+    container.addEventListener("input", mark, { capture: true });
+    container.addEventListener("change", mark, { capture: true });
+    // Optional: programmatisch aufräumen bei Speichern:
+    container.addEventListener(
+      "click",
+      (e) => {
+        const btn = e.target.closest("[data-reset-dirty]");
+        if (btn) this.setDirty(false);
+      },
+      true
+    );
+  }
+
+  /** Fängt Links/Buttons ab und bestätigt bei dirty. */
   interceptLinks(container = document) {
     container.addEventListener(
       "click",
       async (e) => {
         const t = e.target.closest("a,[data-navigate]");
         if (!t || t.hasAttribute("data-bypass-guard")) return;
+
         if (this.isDirty()) {
           e.preventDefault();
           const ok = await this.confirm();
@@ -70,12 +103,14 @@ class UnsavedChangesGuard {
         }
       },
       true
-    ); // capture-phase, damit nichts „durchrutscht“
+    ); // capture-phase
   }
+
   confirm() {
     this._open();
     return new Promise((res) => (this._resolve = res));
   }
+
   _open() {
     this.modal.removeAttribute("hidden");
     document.body.classList.add("ucm-modal-open");
@@ -84,6 +119,7 @@ class UnsavedChangesGuard {
     this._last = this._focusables[this._focusables.length - 1];
     document.addEventListener("keydown", this._onKeydown, true);
   }
+
   _close(ok) {
     document.removeEventListener("keydown", this._onKeydown, true);
     this.modal.setAttribute("hidden", "");
@@ -93,6 +129,7 @@ class UnsavedChangesGuard {
     if (ok) this.setDirty(false);
     if (res) res(!!ok);
   }
+
   _trapFocus(e) {
     if (!this._focusables || this._focusables.length === 0) return;
     if (e.shiftKey && document.activeElement === this._first) {
@@ -104,22 +141,19 @@ class UnsavedChangesGuard {
     }
   }
 }
+
 export function createUnsavedGuard() {
   const modal = document.querySelector("[data-modal]");
   if (!modal) throw new Error("Unsaved modal not found");
   const guard = new UnsavedChangesGuard(modal);
+
+  // Tab/Fenster schließen -> nur nativer beforeunload-Dialog erlaubt
   window.addEventListener("beforeunload", (e) => {
     if (guard.isDirty()) {
       e.preventDefault();
       e.returnValue = "";
     }
   });
+
   return guard;
 }
-document.addEventListener("DOMContentLoaded", () => {
-  const guard = createUnsavedGuard();
-  const form = document.querySelector("form");
-  if (form) guard.trackForm(form);
-  guard.interceptLinks(document);
-  window.__unsavedGuard = guard; // optional für Debug
-});
