@@ -24,3 +24,26 @@
 .mi--lg {
     font-size: 28px
 }
+
+/* Icon-only Button (zentriert die Glyphe exakt im runden Container) */
+.icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: 10px;
+    border: 1px solid var(--color-border, #e5e7eb);
+    background: #fff;
+    color: #374151;
+    cursor: pointer;
+}
+
+.icon-btn:hover {
+    background: #f9fafb;
+}
+
+.icon-btn .mi {
+    line-height: 1;
+}

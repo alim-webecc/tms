@@ -29,6 +29,9 @@
     position: fixed;
     inset: 0;
     z-index: var(--z-modal);
+    /* zentriert den Dialog exakt in beiden Achsen */
+    display: grid;
+    place-items: center;
 }
 
 .ucm-modal__overlay {
@@ -40,7 +43,7 @@
 /* Dialog */
 .ucm-modal__dialog {
     position: relative;
-    margin: 12vh auto 0;
+    margin: 0;
     width: min(640px, calc(100% - 40px));
     background: var(--color-surface);
     color: var(--color-text);

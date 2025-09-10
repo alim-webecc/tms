@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 import { promises as fs } from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
 
-const ROOT = path.join(process.cwd(), "frontend");
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const ROOT = path.resolve(__dirname, ".."); // <-- immer /frontend
 const EXTS = /\.html?$/i;
 const IGN = new Set(["node_modules", "dist", "build", ".git", ".cache"]);
 
@@ -19,7 +21,6 @@ async function walk(dir, out = []) {
   }
   return out;
 }
-
 function ensureHeadLinks(html) {
   if (!html.includes(CSS1))
     html = html.replace(/<\/head>/i, `  ${CSS1}\n</head>`);
@@ -31,7 +32,6 @@ function ensureBodyScript(html) {
   if (!html.includes(JS)) html = html.replace(/<\/body>/i, `  ${JS}\n</body>`);
   return html;
 }
-
 let changed = 0;
 for (const file of await walk(ROOT)) {
   let txt = await fs.readFile(file, "utf8");

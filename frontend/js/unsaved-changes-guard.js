@@ -88,17 +88,36 @@ class UnsavedChangesGuard {
         const t = e.target.closest("a,[data-navigate]");
         if (!t || t.hasAttribute("data-bypass-guard")) return;
 
+        const isAnchor = t.tagName.toLowerCase() === "a";
+        const go = () => {
+          if (isAnchor) {
+            const href = t.getAttribute("href");
+            if (href) window.location.href = href;
+          } else if (t.dataset.navigate) {
+            const fn = window[t.dataset.navigate];
+            if (typeof fn === "function") fn.call(t, e);
+            else if (t.dataset.href) window.location.href = t.dataset.href;
+            else if (t.dataset.back === "1" || t.dataset.navigate === "back")
+              history.back();
+          }
+        };
+
         if (this.isDirty()) {
           e.preventDefault();
           const ok = await this.confirm();
           if (ok) {
-            if (t.tagName.toLowerCase() === "a")
-              window.location.href = t.getAttribute("href");
-            else if (
-              t.dataset.navigate &&
-              typeof window[t.dataset.navigate] === "function"
-            )
-              window[t.dataset.navigate]();
+            // kurzzeitig beforeunload-Unterdrückung → kein nativer Dialog
+            this._suppressBeforeUnload = true;
+            setTimeout(() => {
+              this._suppressBeforeUnload = false;
+            }, 600);
+            go();
+          }
+        } else {
+          // nicht dirty: <a> → Browser macht das; [data-navigate] → selbst ausführen
+          if (!isAnchor) {
+            e.preventDefault();
+            go();
           }
         }
       },
@@ -149,7 +168,7 @@ export function createUnsavedGuard() {
 
   // Tab/Fenster schließen -> nur nativer beforeunload-Dialog erlaubt
   window.addEventListener("beforeunload", (e) => {
-    if (guard.isDirty()) {
+    if (guard.isDirty() && !guard._suppressBeforeUnload) {
       e.preventDefault();
       e.returnValue = "";
     }
