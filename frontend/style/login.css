@@ -1,0 +1,215 @@
+/* Seite mittig (unterhalb Header) */
+.page {
+    min-height: calc(100vh - 56px);
+    display: grid;
+    place-items: center;
+    padding: 32px 16px;
+    background: #f7fafc;
+}
+
+/* Header (Label links, Logo rechts) */
+.site-header {
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #0e3a57;
+    color: #fff;
+    padding: 0 12px;
+}
+
+.site-header__title {
+    margin: 0;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.brand__logo {
+    height: 34px;
+    border-radius: 6px;
+}
+
+/* Karte */
+.card {
+    width: 520px;
+    /* von dir gewünschte Breite */
+    max-width: calc(100vw - 32px);
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, .06);
+    padding: 24px;
+}
+
+.card__title {
+    margin: 0 0 16px;
+    font-size: 20px;
+    color: #0a2540;
+    font-weight: 700;
+}
+
+.login-card {
+    position: relative;
+}
+
+/* Formular */
+.form__row {
+    margin-bottom: 14px;
+}
+
+.form__label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+
+.req {
+    color: #e11d48;
+}
+
+.form__hint {
+    margin-top: 6px;
+    font-size: 12px;
+    color: #ef4444;
+}
+
+.form__input {
+    width: 100%;
+    height: 40px;
+    padding: 8px 10px;
+    border: 1px solid #cfd6df;
+    border-radius: 6px;
+}
+
+.form__input:focus {
+    border-color: #0b7bd4;
+    box-shadow: 0 0 0 3px rgba(11, 123, 212, .15);
+    outline: 0;
+}
+
+.form__input.is-invalid {
+    border-color: #ef4444;
+}
+
+/* Passwort-Auge (sauber rechts ausgerichtet) */
+.input-affix {
+    position: relative;
+}
+
+.form__input--has-icon {
+    padding-right: 44px;
+}
+
+.toggle {
+    position: absolute;
+    top: 50%;
+    right: 6px;
+    transform: translateY(-50%);
+    height: 28px;
+    width: 34px;
+    display: inline-grid;
+    place-items: center;
+    border: 1px solid #cfd6df;
+    border-radius: 6px;
+    background: #fff;
+    cursor: pointer;
+}
+
+.toggle .icon {
+    fill: #0a2540;
+    opacity: .7;
+}
+
+.toggle:hover .icon {
+    opacity: 1;
+}
+
+/* Aktionen */
+.form__actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+
+.btn {
+    background: #7cc8d4;
+    color: #0a2540;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: not-allowed;
+    opacity: .6;
+}
+
+.btn.is-active,
+.btn:not([disabled]) {
+    cursor: pointer;
+    opacity: 1;
+}
+
+.btn:active {
+    transform: translateY(1px);
+}
+
+/* Toast – globale Basis */
+.toast {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.toast__item {
+    min-width: 260px;
+    background: #111827;
+    color: #fff;
+    padding: 12px 14px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, .15);
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: .25s;
+}
+
+.toast__item.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast__item--error {
+    background: #b91c1c;
+}
+
+.toast__item--success {
+    background: #065f46;
+}
+
+/* Toast-Variante in der Karte: mittig oberhalb der Karte */
+.toast--card {
+    position: absolute !important;
+    /* relativ zur .login-card */
+    left: 50%;
+    top: auto;
+    /* top ausschalten */
+    bottom: calc(100% - 400px);
+    /* 12px Abstand über der Karte */
+    transform: translateX(-50%);
+    z-index: 30;
+    pointer-events: none;
+}
+
+@media (max-width:640px) {
+    .toast--card {
+        top: -8px;
+    }
+}

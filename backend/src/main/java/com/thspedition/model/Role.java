@@ -1,0 +1,1 @@
+package com.thspedition.model; public enum Role { ADMIN, MITARBEITER }

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Mitarbeiter Beschäftigungshistorie</title>
+    <link rel="stylesheet" href="./style/base.css" />
+    <script>window.API_BASE = 'http://localhost:8081';</script>
+</head>
+
+<body>
+    <header class="site-header"></header>
+    <main class="page page--pad">
+        <h1 class="page-title">Mitarbeiter Beschäftigungshistorie</h1>
+
+        <div class="filters" style="margin-top:40px">
+            <div class="filters__field" style="margin-left:20px">
+                <label for="empName">Mitarbeiter</label>
+                <input id="empName" class="form__input" placeholder="Name (Pflicht)">
+            </div>
+            <div class="filters__field" style="margin-left:20px">
+                <label for="fromDate">Arbeitstag von</label>
+                <input id="fromDate" type="date" class="form__input">
+            </div>
+            <div class="filters__field" style="margin-left:20px">
+                <label for="toDate">Arbeitstag bis</label>
+                <input id="toDate" type="date" class="form__input">
+            </div>
+            <div class="filters__actions" style="margin-left:20px">
+                <button id="btnSearch" class="iconbtn" title="Suchen" aria-label="Suchen" disabled>🔎</button>
+                <button id="btnReset" class="iconbtn iconbtn--reset" title="Zurücksetzen" aria-label="Zurücksetzen"
+                    disabled>↺</button>
+            </div>
+        </div>
+
+        <div class="table-wrap" style="margin-top:30px">
+            <table class="table table--striped" id="histTable">
+                <thead>
+                    <tr>
+                        <th>Auftrags-ID</th>
+                        <th>Status</th>
+                        <th>Aktion</th>
+                        <th>Datum und Uhrzeit</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="pagerbar">
+            <span id="hitcount" class="hitcount">0 Treffer</span>
+            <div id="pager" class="pager"></div>
+        </div>
+    </main>
+
+    <div id="appToast" class="toast"></div>
+
+    <script type="module">
+        import { renderHeader } from "./js/header.js";
+        import { requireAuth, getRole } from "./js/auth.js";
+        import "./js/staff-history.js";
+        requireAuth();
+        if ((getRole() || "").toUpperCase() !== "ADMIN") location.replace("offene-auftraege.html");
+        renderHeader();
+    </script>
+</body>
+
+</html>
