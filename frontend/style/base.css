@@ -764,7 +764,7 @@ a:hover {
 .kebab-menu {
   position: absolute;
   top: 100%;
-  left: 0;
+  right: 0;
   z-index: 20;
   display: none;
 }
@@ -774,9 +774,9 @@ a:hover {
 }
 
 .kebab-menu.to-left {
-  left: auto;
-  right: 0;
-  transform-origin: top right;
+  left: 0;
+  right: auto;
+  transform-origin: top left;
 }
 
 /* Verhindert, dass Container das Menü abschneidet */
@@ -789,5 +789,21 @@ a:hover {
 /* Rechte Spalte etwas Luft geben (vermeidet Clipping am Rand) */
 table tr>td:last-child,
 table tr>th:last-child {
+  padding-right: 12px;
+}
+
+/* Container sollen das Menü nicht clippen */
+.table,
+.table-responsive,
+.table-container,
+tbody,
+tr,
+td {
+  overflow: visible !important;
+}
+
+td:last-child,
+th:last-child {
+  position: relative;
   padding-right: 12px;
 }

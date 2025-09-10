@@ -4,18 +4,12 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const FRONTEND = path.resolve(__dirname, "..");
+const FRONTEND = path.resolve(__dirname, ".."); // immer /frontend
 const KEEP = new Set(["neue-auftrag.html", "auftragsdetail.html"]);
 const TAG = '<script type="module" src="./js/init-unsaved-modal.js"></script>';
 
 async function walk(dir, out = []) {
   for (const e of await fs.readdir(dir, { withFileTypes: true })) {
-    if (
-      e.name.startsWith(".") ||
-      ["tools", "img", "js", "style", "components"].includes(e.name)
-    ) {
-      if (!e.isDirectory()) continue;
-    }
     const p = path.join(dir, e.name);
     if (e.isDirectory()) await walk(p, out);
     else if (e.name.endsWith(".html")) out.push(p);

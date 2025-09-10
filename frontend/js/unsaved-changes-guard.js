@@ -1,9 +1,9 @@
 /**
  * Unsaved changes Guard + Modal-Steuerung.
- * - Nur Buttons (OK/Abbrechen/X) schließen.
- * - Backdrop/ESC haben keine Wirkung.
+ * - Nur Buttons (OK/Abbrechen/X) schließen; Overlay/ESC haben keine Wirkung.
  * - Fokus-Trap & Body-Scroll-Lock.
- * - Markiert Änderungen global (auch ohne <form>).
+ * - Interceptet Links UND Buttons (data-href / data-back / data-navigate).
+ * - „OK“ unterdrückt kurzzeitig ALLE beforeunload-Prompts → kein nativer Dialog.
  */
 function getFocusable(el) {
   return [
@@ -24,6 +24,7 @@ class UnsavedChangesGuard {
     this.backdrop = modal.querySelector(".ucm-modal__overlay");
     this._dirty = false;
     this._resolve = null;
+    this._suppressBeforeUnload = false;
 
     // Backdrop: Klicks abfangen (kein Close)
     this.backdrop.addEventListener("click", (e) => {
@@ -56,7 +57,7 @@ class UnsavedChangesGuard {
     return this._dirty;
   }
 
-  /** Trackt konkretes <form>-Element. */
+  /** Trackt ein <form>. */
   trackForm(form) {
     if (!form) return;
     const mark = () => this.setDirty(true);
@@ -64,27 +65,19 @@ class UnsavedChangesGuard {
     form.addEventListener("change", mark, { capture: true });
   }
 
-  /** Trackt ALLE Inputs in einem Container (z. B. document), auch ohne <form>. */
+  /** Trackt Eingaben global – auch ohne <form>. */
   trackAnyInputs(container = document) {
     const mark = () => this.setDirty(true);
     container.addEventListener("input", mark, { capture: true });
     container.addEventListener("change", mark, { capture: true });
-    // Optional: programmatisch aufräumen bei Speichern:
-    container.addEventListener(
-      "click",
-      (e) => {
-        const btn = e.target.closest("[data-reset-dirty]");
-        if (btn) this.setDirty(false);
-      },
-      true
-    );
   }
 
-  /** Fängt Links/Buttons ab und bestätigt bei dirty. */
+  /** Bestätigt Navigation, fängt Links/Buttons ab. */
   interceptLinks(container = document) {
     container.addEventListener(
       "click",
       async (e) => {
+        // Auch Buttons ohne <a> unterstützen:
         const t = e.target.closest(
           'a,[data-navigate],[data-href],[data-back],[data-role="cancel"],button[data-action="cancel"]'
         );
@@ -120,10 +113,10 @@ class UnsavedChangesGuard {
           e.preventDefault();
           const ok = await this.confirm();
           if (ok) {
-            // === Bug 4: native beforeunload prompt zuverlässig unterdrücken ===
+            // Unterdrücke *alle* beforeunload-Handler ganz kurz → kein nativer Dialog
             this._suppressBeforeUnload = true;
             const suppress = (ev) => {
-              ev.stopImmediatePropagation(); /* kein returnValue setzen */
+              ev.stopImmediatePropagation();
             };
             window.addEventListener("beforeunload", suppress, {
               capture: true,
@@ -191,9 +184,11 @@ export function createUnsavedGuard() {
 
   // Tab/Fenster schließen -> nur nativer beforeunload-Dialog erlaubt
   window.addEventListener("beforeunload", (e) => {
+    // 'returnValue' ist als API deprecated, aber weiterhin von Browsern gefordert
+    // (Safari/Chrome), um den nativen Dialog zu triggern.
     if (guard.isDirty() && !guard._suppressBeforeUnload) {
       e.preventDefault();
-      e.returnValue = "";
+      e.returnValue = ""; // bewusst gesetzt – siehe MDN-Hinweis
     }
   });
 
