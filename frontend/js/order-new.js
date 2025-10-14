@@ -146,10 +146,10 @@ cancelBtn?.addEventListener("click", (e) => {
 });
 
 /* -------- Optional: native beforeunload nur außerhalb unserer Buttons -------- */
-window.addEventListener("beforeunload", (e) => {
-  if (isDirty() && !allowNav) {
-    e.preventDefault();
-    e.returnValue = "";
-  }
-  // Falls du NIE den nativen Dialog möchtest: die beiden Zeilen oben auskommentieren.
-});
+// window.addEventListener("beforeunload", (e) => {
+//   if (isDirty() && !allowNav) {
+//     e.preventDefault();
+//     e.returnValue = "";
+//   }
+//   // Falls du NIE den nativen Dialog möchtest: die beiden Zeilen oben auskommentieren.
+// });
