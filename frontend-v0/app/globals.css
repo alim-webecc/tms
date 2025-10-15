@@ -292,4 +292,30 @@
   body {
     @apply bg-background text-foreground antialiased;
   }
+
+  /* Zentriertes Layout mit max-width und Abstand zu beiden Rändern */
+  .container {
+    @apply mx-auto px-4 sm:px-6 lg:px-8;
+    max-width: 1600px;
+  }
+
+  /* Cursor-pointer für alle klickbaren Elemente */
+  button,
+  a,
+  [role="button"],
+  [role="menuitem"],
+  [role="tab"],
+  label[for],
+  select,
+  .cursor-pointer {
+    @apply cursor-pointer;
+  }
+
+  /* Hover-Effekte für bessere UX */
+  button:hover,
+  a:hover,
+  [role="button"]:hover,
+  [role="menuitem"]:hover {
+    @apply transition-colors duration-200;
+  }
 }
