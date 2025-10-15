@@ -5,6 +5,8 @@ import "./globals.css"
 import { ThemeProvider } from "@/lib/theme-context"
 import { AuthProvider } from "@/lib/auth-context"
 import { Header } from "@/components/header"
+import { Toaster as Sonner } from "@/components/ui/sonner"
+import { Toaster } from "@/components/ui/toaster"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,8 +19,8 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "TH Spedition - Auftragsverwaltung",
-  description: "Transport Management System für TH Spedition",
+  title: "HATOMS - Transport Order Management System",
+  description: "Multi-Tenant Transport Management System",
     generator: 'v0.app'
 }
 
@@ -28,12 +30,14 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="de" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body className="font-sans antialiased">
+    <html lang="de" className={`${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
+      <body className="font-sans">
         <AuthProvider>
           <ThemeProvider>
             <Header />
-            {children}
+            <main className="min-h-[calc(100vh-4rem)]">{children}</main>
+            <Sonner />
+            <Toaster />
           </ThemeProvider>
         </AuthProvider>
       </body>

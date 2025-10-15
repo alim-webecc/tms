@@ -104,6 +104,12 @@ export function Header() {
                     Mitarbeiter Beschäftigungshistorie
                   </Link>
                 </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/statistik" className="cursor-pointer">
+                    Benutzer-Statistiken
+                  </Link>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           )}
