@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/th_spedition?createDatabaseIfNotExist=true&serverTimezone=UTC
+    username: root
+    password: "Alim0710."
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  flyway:
+    locations: classpath:db/migration/mysql
