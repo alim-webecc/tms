@@ -1,1 +1,0 @@
-package com.hatoms.tms.model; public enum Role { ADMIN, MITARBEITER }
