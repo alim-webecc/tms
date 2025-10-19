@@ -12,7 +12,7 @@ export default function AuftragsDetailPage({ params }: { params: { id: string } 
     <div className="container py-8 space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="outline" size="icon" asChild>
-          <Link href="/auftrage">
+          <Link href="/auftrage/offen">
             <ArrowLeft className="h-4 w-4" />
           </Link>
         </Button>
@@ -27,7 +27,7 @@ export default function AuftragsDetailPage({ params }: { params: { id: string } 
           <div className="grid gap-6 md:grid-cols-3">
             <div className="space-y-2">
               <Label htmlFor="auftragsId">Auftrags-ID</Label>
-              <Input id="auftragsId" value="10000017" readOnly />
+              <Input id="auftragsId" value="10000017" readOnly disabled />
             </div>
             <div className="space-y-2">
               <Label htmlFor="status">Status *</Label>
@@ -105,7 +105,7 @@ export default function AuftragsDetailPage({ params }: { params: { id: string } 
 
           <div className="flex gap-4 justify-end">
             <Button variant="outline" asChild>
-              <Link href="/auftrage">Abbrechen</Link>
+              <Link href="/auftrage/offen">Abbrechen</Link>
             </Button>
             <Button variant="secondary">Speichern</Button>
             <Button>Löschen</Button>

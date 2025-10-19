@@ -1,132 +1,267 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { MoreVertical, Search, RefreshCw } from "lucide-react"
+import { useState } from "react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { LayoutGrid, List } from "lucide-react";
+import { OrderFilters } from "@/components/orders/order-filters";
+import { OrderTable, type Order } from "@/components/orders/order-table";
 
-// Demo-Daten für Aufträge in Bearbeitung
-const DEMO_ORDERS = [
+// Demo-Daten (unverändert gelassen)
+const DEMO_ORDERS: Order[] = [
   {
-    id: "10000005",
-    geber: "diyar",
-    ladedatum: "2025-09-12",
-    vonPLZ: "85276",
-    entladedatum: "2025-09-15",
+    id: "10000007",
+    auftraggeber: "amat",
+    ladedatum: "2025-09-05",
+    vonPLZ: "85565",
+    entladedatum: "2025-10-04",
     nachPLZ: "85309",
-    preisKunde: "5.000,00 €",
-    preisFF: "3.200,00 €",
+    preisKunde: "3.500,00 €",
+    preisFF: "1.800,00 €",
     frachtfuehrer: "semet",
-    ldm: "54",
-    gewicht: "254",
-    status: "In Bearbeitung",
-    bearbeiter: "admin",
+    ldm: "30",
+    gewicht: "350",
+    bemerkung: "test1",
+    status: "offen",
+    prioritaet: "hoch",
   },
-]
+  {
+    id: "10000006",
+    auftraggeber: "mirigul",
+    ladedatum: "2024-12-20",
+    vonPLZ: "89865",
+    entladedatum: "2025-09-19",
+    nachPLZ: "85309",
+    preisKunde: "2.000,00 €",
+    preisFF: "1.500,00 €",
+    frachtfuehrer: "alim",
+    ldm: "20",
+    gewicht: "200",
+    bemerkung: "test",
+    status: "offen",
+    prioritaet: "normal",
+  },
+  {
+    id: "10000003",
+    auftraggeber: "diyar",
+    ladedatum: "2025-08-16",
+    vonPLZ: "85276",
+    entladedatum: "2025-08-14",
+    nachPLZ: "85301",
+    preisKunde: "15.000,00 €",
+    preisFF: "10.000,00 €",
+    frachtfuehrer: "diyar",
+    ldm: "30",
+    gewicht: "3000",
+    bemerkung: "test",
+    status: "offen",
+  },
+];
 
-export default function InBearbeitungPage() {
-  const [searchId, setSearchId] = useState("")
+export default function OffeneAuftragePage() {
+  const [viewMode, setViewMode] = useState<"table" | "cards">("table");
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+
+  const handleRowClick = (order: Order) => {
+    setSelectedOrder(order);
+    setIsPreviewOpen(true);
+  };
+
+  const handleBulkAction = (action: string, selectedIds: string[]) => {
+    console.log("[v0] Bulk action:", action, selectedIds);
+  };
 
   return (
-    <div className="container py-8">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">Aufträge in Bearbeitung</h1>
+    <div className="space-y-6">
+      {/* Seitenkopf */}
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Aufträge in Bearbeitung
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            {DEMO_ORDERS.length} Aufträge gefunden
+          </p>
+        </div>
+
+        {/* Nur Ansichtsschalter – KEIN lokaler „Neuer Auftrag“-Button mehr */}
+        <Tabs
+          value={viewMode}
+          onValueChange={(v) => setViewMode(v as "table" | "cards")}
+          className="ml-auto"
+        >
+          <TabsList>
+            <TabsTrigger value="table" className="flex items-center gap-2">
+              <List className="h-4 w-4" />
+              Tabelle
+            </TabsTrigger>
+            <TabsTrigger value="cards" className="flex items-center gap-2">
+              <LayoutGrid className="h-4 w-4" />
+              Karten
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
 
-      {/* Filter-Bereich */}
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-6 p-4 bg-card rounded-lg border">
-        <div>
-          <label className="text-sm text-muted-foreground mb-1 block">Auftrags-ID</label>
-          <Input placeholder="z.B. 100000*" value={searchId} onChange={(e) => setSearchId(e.target.value)} />
-        </div>
-        <div>
-          <label className="text-sm text-muted-foreground mb-1 block">Auftragsgeber</label>
-          <Input placeholder="Name*" />
-        </div>
-        <div>
-          <label className="text-sm text-muted-foreground mb-1 block">Bearbeiter</label>
-          <Input placeholder="Name*" />
-        </div>
-        <div className="flex items-end gap-2">
-          <Button variant="outline" className="gap-2 flex-1 bg-transparent">
-            <Search className="h-4 w-4" />
-            Suchen
-          </Button>
-          <Button variant="outline" size="icon">
-            <RefreshCw className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
+      {/* Filter */}
+      <OrderFilters onFilterChange={() => {}} />
 
-      {/* Tabelle */}
-      <div className="rounded-lg border bg-card overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Auftrags-ID</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Auftragsgeber</TableHead>
-              <TableHead>Ladedatum</TableHead>
-              <TableHead>von (PLZ)</TableHead>
-              <TableHead>Entladedatum</TableHead>
-              <TableHead>nach (PLZ)</TableHead>
-              <TableHead>Preis Kunde</TableHead>
-              <TableHead>Preis FF</TableHead>
-              <TableHead>Frachtführer</TableHead>
-              <TableHead>Bearbeiter</TableHead>
-              <TableHead className="w-[60px]"></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {DEMO_ORDERS.map((order) => (
-              <TableRow key={order.id}>
-                <TableCell>
-                  <Link href={`/auftrage/${order.id}`} className="text-primary hover:underline">
-                    {order.id}
-                  </Link>
-                </TableCell>
-                <TableCell>
-                  <Badge variant="secondary">{order.status}</Badge>
-                </TableCell>
-                <TableCell>{order.geber}</TableCell>
-                <TableCell>{order.ladedatum}</TableCell>
-                <TableCell>{order.vonPLZ}</TableCell>
-                <TableCell>{order.entladedatum}</TableCell>
-                <TableCell>{order.nachPLZ}</TableCell>
-                <TableCell>{order.preisKunde}</TableCell>
-                <TableCell>{order.preisFF}</TableCell>
-                <TableCell>{order.frachtfuehrer}</TableCell>
-                <TableCell>{order.bearbeiter}</TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem asChild>
-                        <Link href={`/auftrage/${order.id}`}>Details anzeigen</Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>Bearbeiten</DropdownMenuItem>
-                      <DropdownMenuItem>Als offen markieren</DropdownMenuItem>
-                      <DropdownMenuItem>Als geschlossen markieren</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+      {/* Tabelle oder Karten */}
+      {viewMode === "table" ? (
+        <OrderTable
+          orders={DEMO_ORDERS}
+          onRowClick={handleRowClick}
+          onBulkAction={handleBulkAction}
+        />
+      ) : (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {DEMO_ORDERS.map((o) => (
+            <Card
+              key={o.id}
+              className="cursor-pointer transition-colors hover:border-primary"
+              onClick={() => handleRowClick(o)}
+            >
+              <CardHeader>
+                <CardTitle>Auftrag {o.id}</CardTitle>
+                <CardDescription>{o.auftraggeber}</CardDescription>
+              </CardHeader>
+              <CardContent className="grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <div className="text-muted-foreground">Ladedatum</div>
+                  <div>{o.ladedatum}</div>
+                </div>
+                <div>
+                  <div className="text-muted-foreground">Entladedatum</div>
+                  <div>{o.entladedatum}</div>
+                </div>
+                <div>
+                  <div className="text-muted-foreground">von (PLZ)</div>
+                  <div>{o.vonPLZ}</div>
+                </div>
+                <div>
+                  <div className="text-muted-foreground">nach (PLZ)</div>
+                  <div>{o.nachPLZ}</div>
+                </div>
+                <div>
+                  <div className="text-muted-foreground">Preis Kunde</div>
+                  <div>{o.preisKunde}</div>
+                </div>
+                <div>
+                  <div className="text-muted-foreground">Preis FF</div>
+                  <div>{o.preisFF}</div>
+                </div>
+                <div>
+                  <div className="text-muted-foreground">Frachtführer</div>
+                  <div>{o.frachtfuehrer}</div>
+                </div>
+                <div>
+                  <div className="text-muted-foreground">LDM</div>
+                  <div>{o.ldm}</div>
+                </div>
+                <div>
+                  <div className="text-muted-foreground">Gewicht (kg)</div>
+                  <div>{o.gewicht}</div>
+                </div>
+                <div className="col-span-2">
+                  <div className="text-muted-foreground">Bemerkung</div>
+                  <div>{o.bemerkung || "Keine"}</div>
+                </div>
+                <div className="col-span-2 flex gap-2 pt-2">
+                  <Button variant="default" size="sm">
+                    Details anzeigen
+                  </Button>
+                  <Button variant="outline" size="sm">
+                    Bearbeiten
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
 
-      <div className="flex items-center justify-between mt-4">
-        <p className="text-sm text-muted-foreground">1 Treffer</p>
-      </div>
+      {/* Vorschau-Sheet */}
+      <Sheet open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Auftragsvorschau</SheetTitle>
+            <SheetDescription>Auftrag {selectedOrder?.id}</SheetDescription>
+          </SheetHeader>
+
+          {selectedOrder && (
+            <div className="grid grid-cols-2 gap-4 py-4 text-sm">
+              <div>
+                <div className="text-muted-foreground">Auftraggeber</div>
+                <div>{selectedOrder.auftraggeber}</div>
+              </div>
+              <div>
+                <div className="text-muted-foreground">Frachtführer</div>
+                <div>{selectedOrder.frachtfuehrer}</div>
+              </div>
+              <div>
+                <div className="text-muted-foreground">Von</div>
+                <div>{selectedOrder.vonPLZ}</div>
+              </div>
+              <div>
+                <div className="text-muted-foreground">Nach</div>
+                <div>{selectedOrder.nachPLZ}</div>
+              </div>
+              <div>
+                <div className="text-muted-foreground">Ladedatum</div>
+                <div>{selectedOrder.ladedatum}</div>
+              </div>
+              <div>
+                <div className="text-muted-foreground">Entladedatum</div>
+                <div>{selectedOrder.entladedatum}</div>
+              </div>
+              <div>
+                <div className="text-muted-foreground">Preis Kunde</div>
+                <div>{selectedOrder.preisKunde}</div>
+              </div>
+              <div>
+                <div className="text-muted-foreground">Preis FF</div>
+                <div>{selectedOrder.preisFF}</div>
+              </div>
+              <div>
+                <div className="text-muted-foreground">LDM</div>
+                <div>{selectedOrder.ldm}</div>
+              </div>
+              <div>
+                <div className="text-muted-foreground">Gewicht</div>
+                <div>{selectedOrder.gewicht} kg</div>
+              </div>
+              <div className="col-span-2">
+                <div className="text-muted-foreground">Bemerkung</div>
+                <div>{selectedOrder.bemerkung || "Keine"}</div>
+              </div>
+
+              <div className="col-span-2 flex gap-2 pt-2">
+                <Button variant="default" size="sm">
+                  Details anzeigen
+                </Button>
+                <Button variant="outline" size="sm">
+                  Bearbeiten
+                </Button>
+              </div>
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
     </div>
-  )
+  );
 }

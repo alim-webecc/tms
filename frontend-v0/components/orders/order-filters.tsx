@@ -171,7 +171,7 @@ export function OrderFilters({ onFilterChange }: OrderFiltersProps) {
             />
           </div>
 
-          <div className="space-y-2 min-w-[140px]">
+          {/* <div className="space-y-2 min-w-[140px]">
             <Label htmlFor="status" className="text-xs">
               Status
             </Label>
@@ -186,7 +186,7 @@ export function OrderFilters({ onFilterChange }: OrderFiltersProps) {
                 <SelectItem value="geschlossen">Geschlossen</SelectItem>
               </SelectContent>
             </Select>
-          </div>
+          </div> */}
 
           <div className="flex items-end gap-2 ml-auto">
             <Button onClick={handleSearch} className="gap-2 h-9">
@@ -197,13 +197,13 @@ export function OrderFilters({ onFilterChange }: OrderFiltersProps) {
               <X className="h-4 w-4" />
               Zurücksetzen
             </Button>
-            <Button variant="ghost" size="icon" className="h-9 w-9">
+            {/* <Button variant="ghost" size="icon" className="h-9 w-9">
               <RefreshCw className="h-4 w-4" />
             </Button>
             <Button variant="outline" className="gap-2 h-9 bg-transparent">
               <Save className="h-4 w-4" />
               Speichern
-            </Button>
+            </Button> */}
           </div>
         </div>
       </div>
