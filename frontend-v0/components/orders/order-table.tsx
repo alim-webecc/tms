@@ -113,12 +113,6 @@ export function OrderTable({ orders, onRowClick, onBulkAction }: OrderTableProps
           <div className="flex items-center gap-2 p-3 bg-primary/10 rounded-lg border border-primary/20">
             <span className="text-sm font-medium">{selectedIds.length} ausgewählt</span>
             <div className="flex gap-2 ml-auto">
-              <Button size="sm" variant="outline" onClick={() => onBulkAction?.("status", selectedIds)}>
-                Status ändern
-              </Button>
-              <Button size="sm" variant="outline" onClick={() => onBulkAction?.("assign", selectedIds)}>
-                Zuweisen
-              </Button>
               <Button size="sm" variant="outline" onClick={() => onBulkAction?.("export", selectedIds)}>
                 Exportieren
               </Button>
@@ -201,13 +195,9 @@ export function OrderTable({ orders, onRowClick, onBulkAction }: OrderTableProps
                         <DropdownMenuContent align="end" className="w-48">
                           <DropdownMenuItem asChild>
                             <Link href={`/auftrage/${order.id}`} className="cursor-pointer">
-                              <Eye className="mr-2 h-4 w-4" />
-                              Ansehen
+                              <Edit className="mr-2 h-4 w-4" />
+                              Bearbeiten
                             </Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="cursor-pointer">
-                            <Edit className="mr-2 h-4 w-4" />
-                            Bearbeiten
                           </DropdownMenuItem>
                           <DropdownMenuItem className="cursor-pointer" onClick={() => handleAssignClick(order.id)}>
                             <UserPlus className="mr-2 h-4 w-4" />

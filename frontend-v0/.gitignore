@@ -1,29 +1,42 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Node modules
+node_modules/
+.pnpm/
+.pnp/
+.pnp.js
 
-# dependencies
-/node_modules
+# Build output
+.next/
+out/
+dist/
 
-# next.js
-/.next/
-/out/
+# Test coverage
+coverage/
 
-# production
-/build
-
-# debug
+# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.pnpm-debug.log*
+pnpm-debug.log*
 
-# env files
-.env*
+# OS / Editor / IDE spezifisch
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
 
-# vercel
-.vercel
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# typescript
+# Storybook build
+.storybook-out/
+
+# Optional: wenn du CI/CD verwendest
+*.log
 *.tsbuildinfo
-next-env.d.ts
-*storybook.log
-storybook-static
+
+# Optional: wenn du Docker verwendest
+docker-compose.override.yml
